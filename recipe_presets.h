@@ -49,3 +49,6 @@ bool profileRequiresStageSetupReset(const String& name);
 // stage runs warm, since their own instructions target a fixed rise (e.g. "until doubled") and
 // expect only the *time* to get there to vary with temperature, not the target itself.
 bool recipeUsesTemperatureScaledTarget(const String& name);
+// True for the dedicated bulk-only profile that follows The Sourdough Journey's published
+// dough-temperature-to-rise table instead of the app's general sourdough scaling curve.
+bool recipeUsesSourdoughJourneyTarget(const String& name);

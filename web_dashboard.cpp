@@ -190,7 +190,11 @@ String dashboardPage(const AppState& state) {
 
   html += hasSourceUrl ? htmlEscape(selectedPreset.sourceUrl) : "#";
 
-  html += R"rawliteral(" target="_blank" rel="noopener">Ingredients &amp; Mixing: King Arthur Recipe &#8599;</a><br>
+  html += R"rawliteral(" target="_blank" rel="noopener">)rawliteral";
+  html += recipeUsesSourdoughJourneyTarget(state.selectedRecipe)
+              ? "Sourdough Journey Dough Temping Guide &#8599;"
+              : "Ingredients &amp; Mixing: King Arthur Recipe &#8599;";
+  html += R"rawliteral(</a><br>
           <span id="recipeLinkCaption">)rawliteral";
 
   if (!hasSelectedPreset || selectedPreset.hasFinal) {
@@ -251,7 +255,7 @@ String dashboardPage(const AppState& state) {
 
   html += hasSourceUrl ? htmlEscape(selectedPreset.sourceUrl) : "#";
 
-  html += R"rawliteral(" target="_blank" rel="noopener">Open Recipe &#8599;</a>
+  html += R"rawliteral(" target="_blank" rel="noopener">Open Recipe or Guide &#8599;</a>
         </div>
         <div class="event-action" id="completeStepWrap")rawliteral";
 

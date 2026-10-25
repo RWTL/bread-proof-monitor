@@ -122,9 +122,52 @@ float temperatureRiseScale(const AppState& state) {
   return scale;
 }
 
+// The Sourdough Journey Dough Temping Guide's bulk-fermentation targets. Temperatures between
+// the published whole-degree rows are linearly interpolated; readings beyond the table use its
+// nearest endpoint. The profile's editable/learned 75F target is retained as an offset, so the
+// shipped profile follows the table exactly while outcome feedback can still tune it locally.
+float sourdoughJourneyTargetRisePercent(const AppState& state) {
+  if (!state.shtReady || state.selectedStage != "Bulk") return state.targetRisePercent;
+
+  constexpr float kTemperaturesF[] = {
+      65.0f, 66.0f, 67.0f, 68.0f, 69.0f, 70.0f, 71.0f, 72.0f,
+      73.0f, 74.0f, 75.0f, 76.0f, 77.0f, 78.0f, 79.0f, 80.0f,
+  };
+  constexpr float kTargetRisePercent[] = {
+      100.0f, 95.0f, 90.0f, 85.0f, 80.0f, 75.0f, 70.0f, 65.0f,
+      60.0f, 55.0f, 50.0f, 50.0f, 40.0f, 40.0f, 30.0f, 30.0f,
+  };
+  constexpr size_t kPointCount = sizeof(kTemperaturesF) / sizeof(kTemperaturesF[0]);
+  constexpr float kShippedTargetAt75F = 50.0f;
+
+  const float temperatureF = scalingTemperature(state);
+  float guideTarget = kTargetRisePercent[0];
+  if (temperatureF >= kTemperaturesF[kPointCount - 1]) {
+    guideTarget = kTargetRisePercent[kPointCount - 1];
+  } else if (temperatureF > kTemperaturesF[0]) {
+    for (size_t index = 1; index < kPointCount; ++index) {
+      if (temperatureF <= kTemperaturesF[index]) {
+        const float fraction = (temperatureF - kTemperaturesF[index - 1]) /
+                               (kTemperaturesF[index] - kTemperaturesF[index - 1]);
+        guideTarget = kTargetRisePercent[index - 1] +
+                      fraction * (kTargetRisePercent[index] - kTargetRisePercent[index - 1]);
+        break;
+      }
+    }
+  }
+
+  const float adjustedTarget = guideTarget + (state.targetRisePercent - kShippedTargetAt75F);
+  if (adjustedTarget < 5.0f) return 5.0f;
+  if (adjustedTarget > 200.0f) return 200.0f;
+  return adjustedTarget;
+}
+
 // The live, temperature-adjusted version of state.targetRisePercent (itself the shipped or
 // learned reference value) - what "done" actually means right now, not just at a 75F reference.
 float liveTargetRisePercent(const AppState& state) {
+  if (recipeUsesSourdoughJourneyTarget(state.selectedRecipe)) {
+    return sourdoughJourneyTargetRisePercent(state);
+  }
   return state.targetRisePercent / temperatureRiseScale(state);
 }
 

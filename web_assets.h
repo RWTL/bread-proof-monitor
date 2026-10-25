@@ -655,6 +655,9 @@ function updateRecipeLink(profileName) {
 
   if (preset && preset.sourceUrl) {
     recipeLinkAnchor.href = preset.sourceUrl;
+    recipeLinkAnchor.textContent = preset.name === 'Sourdough Journey Bulk'
+      ? 'Sourdough Journey Dough Temping Guide \u2197'
+      : 'Ingredients & Mixing: King Arthur Recipe \u2197';
     recipeLinkWrap.style.display = 'block';
     setText('recipeLinkCaption', recipeLinkCaptionFor(preset));
   } else {

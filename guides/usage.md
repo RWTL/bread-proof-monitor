@@ -26,6 +26,8 @@ The monitor also enforces a minimum time for each segment. At 75°F this is gene
 
 For most sourdough profiles, the target and fold triggers also adjust for temperature. Warmer dough lowers them so it is caught before it overproofs, using a slow average of the ambient reading (roughly an hour) rather than every swing in the air. A cooler room never raises them above the recipe's own numbers. Folds scale the same way, so they stay at the same fraction of the way to the target. Yeast profiles aren't adjusted.
 
+The **Sourdough Journey Bulk** profile is the exception: it follows the Dough Temping Guide's published 65-80°F target-rise table, interpolating between listed temperatures and using the nearest endpoint outside that range. Its 50% target at 75°F is the editable reference; changing it or teaching the monitor through outcome feedback shifts the full table by the same number of percentage points. This profile monitors bulk fermentation only. Because the onboard sensor measures ambient air rather than dough directly, confirm the displayed temperature is representative of the dough before relying on the calculated target.
+
 You may see **Confirming target reached** while the displayed percentage is already at the target. The monitor is waiting for its confirmation conditions. These checks help with noise; you should still judge the dough before finishing.
 
 If the confirmed rise gains less than 2 points in 30 minutes, and no fold or target is close, the status reads **Rise has slowed** and suggests checking the dough. That can be normal in a cool room or an early slow phase. The message clears on its own once the rise picks up, and the monitor keeps tracking either way.

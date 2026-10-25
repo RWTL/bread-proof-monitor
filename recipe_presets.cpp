@@ -8,6 +8,10 @@ constexpr FermentationEvent kNoEvents[kMaxProfileEvents] = {};
 
 const RecipePreset kVisibleRecipePresets[] = {
     {"Custom", "Custom", 75, 50, true, 0, {}},
+    {"Sourdough", "Sourdough Journey Bulk", 50, 0, false, 0, {},
+     "https://thesourdoughjourney.com/wp-content/uploads/2024/08/TSJ-Dough-Temping-Guide.pdf",
+     "Shape the dough, then cold retard at 39F/4C for 12-16 hours as described in the guide.",
+     "Begin monitoring when you add the starter; the guide's timing begins at that point."},
     {"Everyday Bread", "Country Loaf", 90, 50, true, 0, {},
      "https://www.kingarthurbaking.com/recipes/country-loaf-recipe"},
     {"Everyday Bread", "Sandwich Bread", 50, 75, true, 0, {},
@@ -285,6 +289,7 @@ bool profileRequiresStageSetupReset(const String& name) {
   const String normalizedName = normalizeProfileName(name);
 
   return normalizedName == "Country Loaf" ||
+         normalizedName == "Sourdough Journey Bulk" ||
          normalizedName == "Sandwich Bread" ||
          normalizedName == "Whole Wheat Sandwich Bread" ||
          normalizedName == "French Bread" ||
@@ -330,4 +335,8 @@ bool recipeUsesTemperatureScaledTarget(const String& name) {
          normalizedName == "Sourdough Focaccia" ||
          normalizedName == "Sourdough Bagels" ||
          normalizedName == "Hamburger Buns";
+}
+
+bool recipeUsesSourdoughJourneyTarget(const String& name) {
+  return normalizeProfileName(name) == "Sourdough Journey Bulk";
 }
