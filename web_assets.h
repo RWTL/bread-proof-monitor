@@ -819,6 +819,21 @@ function sendAction(path) {
     .catch((error) => alert(error.message || 'Could not reach Proof Monitor.'));
 }
 
+function saveHomeAssistant() {
+  const data = new URLSearchParams();
+  data.append('mqttHost', document.getElementById('mqttHost').value.trim());
+  data.append('mqttPort', document.getElementById('mqttPort').value || '1883');
+  data.append('mqttUser', document.getElementById('mqttUser').value.trim());
+  data.append('mqttPass', document.getElementById('mqttPass').value);
+  fetch('/save-home-assistant', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: data.toString()
+  }).then(handleResponse).then(() => {
+    document.body.innerHTML = '<div style="font-family:Avenir Next,Segoe UI,sans-serif;padding:24px;color:#332518;">Saved. Proof Monitor is restarting...</div>';
+  }).catch((error) => alert(error.message || 'Could not save Home Assistant settings.'));
+}
+
 function legacyCopyTopic(topic, noteEl) {
   // navigator.clipboard requires a secure context (HTTPS or localhost), which this
   // page is not served over. This older technique still works over plain HTTP in
@@ -1065,6 +1080,10 @@ function saveConfig() {
   const data = new URLSearchParams();
   data.append('ssid', ssid);
   data.append('pass', document.getElementById('pass').value);
+  data.append('mqttHost', document.getElementById('mqttHost').value.trim());
+  data.append('mqttPort', document.getElementById('mqttPort').value || '1883');
+  data.append('mqttUser', document.getElementById('mqttUser').value.trim());
+  data.append('mqttPass', document.getElementById('mqttPass').value);
 
   fetch('/save-config', {
     method: 'POST',

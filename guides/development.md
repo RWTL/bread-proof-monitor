@@ -11,7 +11,7 @@ The sketch folder must be named `bread_proof_monitor`, matching `bread_proof_mon
 1. Install the ESP32 board package by Espressif Systems.
 2. Choose **ESP32 Dev Module**.
 3. Choose **Huge APP (3MB No OTA/1MB SPIFFS)** under Partition Scheme. This is the layout used for the distributed firmware.
-4. Install **Adafruit VL53L0X** and **Adafruit SHT31 Library**, including their dependencies.
+4. Install **Adafruit VL53L0X**, **Adafruit SHT31 Library**, and **PubSubClient**, including their dependencies.
 5. Open `bread_proof_monitor.ino`, compile, then upload.
 
 The current local build uses:
@@ -22,8 +22,9 @@ The current local build uses:
 | Adafruit VL53L0X | 1.2.5 |
 | Adafruit SHT31 Library | 2.2.2 |
 | Adafruit BusIO | 1.17.4 |
+| PubSubClient | 2.8 |
 
-The firmware also uses WiFi, WebServer, ESPmDNS, Preferences, HTTPClient, and WiFiClientSecure from the ESP32 core. Keep **GPIO22 = SDA** and **GPIO21 = SCL**.
+The firmware also uses WiFi, WebServer, ESPmDNS, Preferences, HTTPClient, and WiFiClientSecure from the ESP32 core. PubSubClient supplies the optional Home Assistant MQTT connection. Keep **GPIO22 = SDA** and **GPIO21 = SCL**.
 
 ## Arduino CLI
 

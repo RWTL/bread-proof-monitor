@@ -1,6 +1,7 @@
 #include "web_dashboard.h"
 
 #include "notifications.h"
+#include "home_assistant.h"
 #include "outcome_feedback.h"
 #include "proof_state.h"
 #include "recipe_presets.h"
@@ -44,6 +45,7 @@ String liveDataJson(const AppState& state) {
   json += "\"humidity\":" + String(state.humidityPercent, 1) + ",";
   json += "\"elapsed\":\"" + jsonEscape(elapsedText(state)) + "\",";
   json += "\"phoneAlert\":\"" + phoneAlertText(state) + "\",";
+  json += "\"homeAssistantConfigured\":" + String(jsonBool(!state.mqttHost.isEmpty())) + ",";
   json += "\"currentStep\":\"" + jsonEscape(currentStepTitle(state)) + "\",";
   json += "\"currentInstruction\":\"" + jsonEscape(currentStepInstruction(state)) + "\",";
   json += "\"upcomingStep\":\"" + jsonEscape(upcomingStepText(state)) + "\",";
@@ -401,6 +403,37 @@ String dashboardPage(const AppState& state) {
     </details>
 
     <details>
+      <summary>Home Assistant</summary>
+      <div class="small">Connect to the MQTT broker used by Home Assistant. Entities appear automatically through MQTT discovery.</div>
+      <label>MQTT broker address
+        <input id="mqttHost" placeholder="192.168.1.10" value=")rawliteral";
+
+  html += htmlEscape(state.mqttHost);
+
+  html += R"rawliteral(">
+      </label>
+      <label>MQTT port
+        <input id="mqttPort" type="number" min="1" max="65535" value=")rawliteral";
+
+  html += String(state.mqttPort);
+
+  html += R"rawliteral(">
+      </label>
+      <label>MQTT username
+        <input id="mqttUser" value=")rawliteral";
+
+  html += htmlEscape(state.mqttUsername);
+
+  html += R"rawliteral(">
+      </label>
+      <label>MQTT password
+        <input id="mqttPass" type="password" placeholder="Leave blank to keep existing password">
+      </label>
+      <button onclick="saveHomeAssistant()">Save and Restart</button>
+      <div class="hint">Clear the broker address to disable Home Assistant publishing.</div>
+    </details>
+
+    <details>
       <summary>Advanced</summary>
       <div class="small">Developer / testing</div>
       <button class="secondary" onclick="sendAction('/use-calibration-profile')">Use Calibration Test Profile</button>
@@ -479,6 +512,32 @@ String setupPage(const AppState& state) {
       <input id="pass" type="password" placeholder="Leave blank to keep existing password">
     </label>
 
+    <h2>Home Assistant (optional)</h2>
+    <p class="note">Enter the MQTT broker used by Home Assistant to enable automatic discovery.</p>
+    <label>MQTT broker address
+      <input id="mqttHost" placeholder="192.168.1.10" value=")rawliteral";
+
+  html += htmlEscape(state.mqttHost);
+
+  html += R"rawliteral(">
+    </label>
+    <label>MQTT port
+      <input id="mqttPort" type="number" min="1" max="65535" value=")rawliteral";
+
+  html += String(state.mqttPort);
+
+  html += R"rawliteral(">
+    </label>
+    <label>MQTT username
+      <input id="mqttUser" value=")rawliteral";
+
+  html += htmlEscape(state.mqttUsername);
+
+  html += R"rawliteral(">
+    </label>
+    <label>MQTT password
+      <input id="mqttPass" type="password" placeholder="Leave blank to keep existing password">
+    </label>
     <label>Phone alert topic</label>
     <div class="topic" id="topicText">)rawliteral";
 
@@ -529,7 +588,18 @@ void handleData() {
 
 void handleSaveConfig() {
   saveWifiConfig(*gPrefs, *gState, gServer->arg("ssid"), gServer->arg("pass"));
+  saveHomeAssistantConfig(*gPrefs, *gState, gServer->arg("mqttHost"),
+                          static_cast<uint16_t>(gServer->arg("mqttPort").toInt()),
+                          gServer->arg("mqttUser"), gServer->arg("mqttPass"));
   ensureNtfyTopic(*gPrefs, *gState);
+  gServer->send(200, "text/plain", "OK");
+  scheduleRestart(*gState);
+}
+
+void handleSaveHomeAssistant() {
+  saveHomeAssistantConfig(*gPrefs, *gState, gServer->arg("mqttHost"),
+                          static_cast<uint16_t>(gServer->arg("mqttPort").toInt()),
+                          gServer->arg("mqttUser"), gServer->arg("mqttPass"));
   gServer->send(200, "text/plain", "OK");
   scheduleRestart(*gState);
 }
@@ -759,6 +829,7 @@ void configureWebServer(WebServer& server, Preferences& prefs, AppState& state) 
   server.on("/data", HTTP_GET, handleData);
   server.on("/save-config", HTTP_POST, handleSaveConfig);
   server.on("/new-ntfy-topic", HTTP_POST, handleNewNtfyTopic);
+  server.on("/save-home-assistant", HTTP_POST, handleSaveHomeAssistant);
   server.on("/set-profile-target", HTTP_POST, handleSetProfileTarget);
   server.on("/set-recipe-target", HTTP_POST, handleSetProfileTarget);
   server.on("/set-empty", HTTP_POST, handleSetEmpty);

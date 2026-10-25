@@ -14,6 +14,7 @@ Built for an ESP32 with a distance sensor and a temperature and humidity sensor.
 - Fold reminders for recipes with handling steps
 - Separate bulk and final proof targets
 - Optional phone alerts through ntfy: fold reminders, Ready to Shape, and Ready to Bake
+- Optional Home Assistant integration with automatic MQTT discovery
 - Pause and resume while you handle the dough
 - Feedback that adjusts future targets for your recipe and setup
 - Wi-Fi setup from your phone, with no credentials to put in the code
@@ -103,6 +104,18 @@ Alerts use [ntfy](https://ntfy.sh/). Subscribe to the topic shown during setup t
 
 The monitor generates a random topic for you. Treat that topic like a private link: anyone who knows it can subscribe or send messages to it. The dashboard works locally; delivering phone alerts requires internet access.
 
+## Home Assistant
+
+The monitor can publish its rise, target, temperature, humidity, dough height, elapsed time,
+status, stage, and selected profile to Home Assistant using MQTT discovery.
+
+1. Set up the MQTT integration and a broker in Home Assistant.
+2. Open **Home Assistant** on the Proof Monitor dashboard.
+3. Enter the broker's local IP address, port, and credentials, then save.
+4. After the monitor restarts, a **Bread Proof Monitor** device and its entities appear in Home Assistant.
+
+MQTT is optional and disabled until a broker address is saved. Clear the broker address to disable it again.
+
 ## Learning Your Dough
 
 After each stage, rate the dough **Underproofed**, **Just Right**, or **Overproofed**, based on what you saw when that stage finished.
@@ -128,7 +141,7 @@ The firmware uses Arduino for ESP32. See the [development guide](guides/developm
 | `sensor_reader.*` | Distance, temperature, and humidity readings |
 | `recipe_presets.*`, `outcome_feedback.*` | Profiles and learned target adjustments |
 | `web_dashboard.*`, `web_assets.h` | Dashboard and setup pages |
-| `notifications.*`, `wifi_setup.*` | Phone alerts and Wi-Fi |
+| `notifications.*`, `home_assistant.*`, `wifi_setup.*` | Phone alerts, Home Assistant, and Wi-Fi |
 | `docs/` | GitHub Pages installer and firmware files |
 | `guides/` | Usage, development, and publishing instructions |
 | `hardware/` | Carrier PCB design and manufacturing files |

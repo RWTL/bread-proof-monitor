@@ -71,6 +71,10 @@ void loadLegacyState(Preferences& prefs, AppState& state) {
   state.wifiSsid = prefs.getString("ssid", "");
   state.wifiPassword = prefs.getString("pass", "");
   state.ntfyTopic = prefs.getString("ntfy", "");
+  state.mqttHost = prefs.getString("mqttHost", "");
+  state.mqttPort = prefs.getUShort("mqttPort", 1883);
+  state.mqttUsername = prefs.getString("mqttUser", "");
+  state.mqttPassword = prefs.getString("mqttPass", "");
   state.selectedRecipe = normalizeProfileName(state.selectedRecipe);
   state.awaitingFinalProofStart = false;
   state.pendingEventIndex = -1;
@@ -185,6 +189,10 @@ void loadAppState(Preferences& prefs, AppState& state) {
   state.wifiSsid = prefs.getString("ssid", "");
   state.wifiPassword = prefs.getString("pass", "");
   state.ntfyTopic = prefs.getString("ntfy", "");
+  state.mqttHost = prefs.getString("mqttHost", "");
+  state.mqttPort = prefs.getUShort("mqttPort", 1883);
+  state.mqttUsername = prefs.getString("mqttUser", "");
+  state.mqttPassword = prefs.getString("mqttPass", "");
 
   state.proofState = parseProofState(savedProofState);
 

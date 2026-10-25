@@ -45,6 +45,10 @@ struct AppState {
   String wifiSsid = "";
   String wifiPassword = "";
   String ntfyTopic = "";
+  String mqttHost = "";
+  String mqttUsername = "";
+  String mqttPassword = "";
+  uint16_t mqttPort = 1883;
   String selectedRecipe = "Custom";
   String selectedStage = "Bulk";
   String outcomeRecipe = "";
@@ -93,6 +97,7 @@ struct AppState {
   unsigned long lastSensorRead = 0;
   unsigned long lastValidDistanceAtMillis = 0;
   unsigned long lastProgressSaveMillis = 0;
+  unsigned long lastHomeAssistantPublishMillis = 0;
 
   bool restartRequested = false;
   unsigned long restartAt = 0;

@@ -4,6 +4,7 @@
 
 #include "app_state.h"
 #include "notifications.h"
+#include "home_assistant.h"
 #include "proof_state.h"
 #include "sensor_reader.h"
 #include "web_dashboard.h"
@@ -61,6 +62,7 @@ void setup() {
 
   const bool wifiConnected = connectHomeWifi(appState);
   if (!wifiConnected) startSetupMode(appState);
+  if (wifiConnected) beginHomeAssistant(appState);
 
   configureWebServer(server, prefs, appState);
   server.begin();
@@ -70,6 +72,7 @@ void setup() {
 
 void loop() {
   server.handleClient();
+  updateHomeAssistant(appState);
 
   if (appState.restartRequested && millis() >= appState.restartAt) {
     ESP.restart();
